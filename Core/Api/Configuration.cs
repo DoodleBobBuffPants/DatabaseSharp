@@ -3,12 +3,19 @@ using Core.Modules;
 
 namespace Core.Api;
 
-public class Configuration
+public class Configuration : IDisposable
 {
     private readonly IDictionary<string, string> configuration = new Dictionary<string, string>();
     public readonly ContainerBuilder builder = new ContainerBuilder();
+    private IContainer? services;
 
-    private Configuration() => builder.RegisterModule<CoreModule>();
+    private Configuration()
+    {
+        builder.RegisterModule<CoreModule>();
+        builder.RegisterInstance(this).As<Configuration>();
+    }
+
+    public static Configuration Configure() => new Configuration();
 
     public Configuration Set(string key, string value)
     {
@@ -22,9 +29,13 @@ public class Configuration
         return configuration[key];
     }
 
-    public Database Connect() => Database.Connect(this, builder.Build().Resolve<IEnumerable<Database>>());
+    public Database Connect()
+    {
+        services = builder.Build();
+        return Database.Connect(services.Resolve<Configuration>(), services.Resolve<IEnumerable<Database>>());
+    }
 
-    public static Configuration Configure() => new Configuration();
+    public void Dispose() => services?.Dispose();
 
     public override string? ToString() => string.Join(Environment.NewLine, configuration.Select(kv => $"{kv.Key} => {kv.Value}"));
 }
