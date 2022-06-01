@@ -1,3 +1,4 @@
+using Autofac;
 using Core.Modules;
 using Microsoft.Extensions.Logging;
 

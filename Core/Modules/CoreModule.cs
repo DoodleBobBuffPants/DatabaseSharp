@@ -1,3 +1,4 @@
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Core.Api;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,9 +11,7 @@ public class CoreModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         builder.Populate(GetServices());
-        builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetExecutingAssembly())
-            .Where(t => t.IsAssignableTo(typeof(Database)))
-            .As<Database>();
+        builder.RegisterType<EntityFrameworkDatabase>().As<IDatabase>();
     }
 
     private ServiceCollection GetServices()

@@ -1,3 +1,4 @@
+using Autofac;
 using Core.Api.Exceptions;
 using Core.Modules;
 
@@ -29,10 +30,12 @@ public class Configuration : IDisposable
         return configuration[key];
     }
 
-    public Database Connect()
+    public bool ContainsKey(string key) => configuration.ContainsKey(key);
+
+    public IDatabase Connect()
     {
         services = builder.Build();
-        return Database.Connect(services.Resolve<Configuration>(), services.Resolve<IEnumerable<Database>>());
+        return IDatabase.Connect(services.Resolve<Configuration>(), services.Resolve<IEnumerable<IDatabase>>());
     }
 
     public void Dispose() => services?.Dispose();

@@ -1,3 +1,7 @@
+using Core.Api;
+using Core.Api.Exceptions;
+using NUnit.Framework;
+
 namespace Core.Tests.Api;
 
 public class ConfigurationTests
