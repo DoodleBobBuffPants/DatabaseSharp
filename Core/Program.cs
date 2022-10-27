@@ -2,21 +2,13 @@ using Autofac;
 using Core.Modules;
 using Microsoft.Extensions.Logging;
 
-namespace Core;
+using var container = BuildContainer();
+var logger = container.Resolve<ILogger<Program>>();
+logger.LogInformation("Good morning world!");
 
-public class Program
+static IContainer BuildContainer()
 {
-    public static void Main(string[] args)
-    {
-        using var services = Build();
-        var logger = services.Resolve<ILogger<Program>>();
-        logger.LogInformation("Good morning world!");
-    }
-
-    private static IContainer Build()
-    {
-        var builder = new ContainerBuilder();
-        builder.RegisterModule<CoreModule>();
-        return builder.Build();
-    }
+    var builder = new ContainerBuilder();
+    builder.RegisterModule<CoreModule>();
+    return builder.Build();
 }
